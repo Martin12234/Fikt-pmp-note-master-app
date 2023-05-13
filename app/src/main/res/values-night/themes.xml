@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.NoteMaster" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primaryNight</item>
+        <item name="colorPrimaryVariant">@color/primaryNight</item>
+        <item name="android:statusBarColor">@color/primaryNight</item>
+    </style>
+</resources>
