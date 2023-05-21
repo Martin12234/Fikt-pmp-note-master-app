@@ -13,6 +13,9 @@
         android:theme="@style/Theme.NoteMaster"
         tools:targetApi="31">
         <activity
+            android:name=".UserLoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".UserRegistrationActivity"
             android:exported="false" />
         <activity

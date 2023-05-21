@@ -3,6 +3,7 @@ package com.ml.notemaster;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -41,7 +42,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
 
 
         createUserBtn.setOnClickListener(v->createUser());
-        loginBtnTxtView.setOnClickListener(v->finish());
+        loginBtnTxtView.setOnClickListener(v->startActivity(new Intent(UserRegistrationActivity.this, UserLoginActivity.class)));
 
 
     }
@@ -70,14 +71,14 @@ public class UserRegistrationActivity extends AppCompatActivity {
                 changeInProgress(false);
                 if(task.isSuccessful()){
                     //creating user is done
-                    Toast.makeText(UserRegistrationActivity.this, "Succesfully create user. Check email to verify", Toast.LENGTH_SHORT).show();
+                    Utility.showToast(UserRegistrationActivity.this, "Successfully create user. Check email to verify");
                     firebaseAuth.getCurrentUser().sendEmailVerification();
                     firebaseAuth.signOut();
                     finish();
                 }
                 else {
                     //failure
-                    Toast.makeText(UserRegistrationActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    Utility.showToast(UserRegistrationActivity.this, task.getException().getLocalizedMessage());
                 }
             }
         });
