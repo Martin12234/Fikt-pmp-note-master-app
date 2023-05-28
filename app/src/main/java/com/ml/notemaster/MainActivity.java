@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageButton;
@@ -14,6 +15,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.Query;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,13 +40,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void showMenu() {
+        Resources resources = getResources();
+
         PopupMenu popupMenu = new PopupMenu(MainActivity.this, menuBtn);
-        popupMenu.getMenu().add("Logout");
+
+        popupMenu.getMenu().add(resources.getString(R.string.logout));
+
+
         popupMenu.show();
-        popupMenu.setOnMenuItegit mClickListener(new PopupMenu.OnMenuItemClickListener() {
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if(item.getTitle()=="Logout") {
+                if (item.getTitle().equals(resources.getString(R.string.logout))) {
                     FirebaseAuth.getInstance().signOut();
                     startActivity(new Intent(MainActivity.this, UserLoginActivity.class));
                     finish();
@@ -52,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
     }
 
     void setupRecyclerView() {

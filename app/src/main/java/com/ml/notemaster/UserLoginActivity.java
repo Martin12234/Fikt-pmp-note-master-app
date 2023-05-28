@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -59,6 +60,7 @@ public class UserLoginActivity extends AppCompatActivity {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                Resources resources = getResources();
                 changeInProgress(false);
                 if(task.isSuccessful()) {
                     //success login
@@ -66,12 +68,11 @@ public class UserLoginActivity extends AppCompatActivity {
                         //go to main activity
                         startActivity(new Intent(UserLoginActivity.this, MainActivity.class));
                     } else {
-                        Utility.showToast(UserLoginActivity.this, "Email not verified, Please verify your email.");
+                        Utility.showToast(UserLoginActivity.this, resources.getString(R.string.verify_email_msg));
                     }
                 } else {
                     //failed login
-                    Utility.showToast(UserLoginActivity.this, task.getException().getLocalizedMessage());
-
+                    Utility.showToast(UserLoginActivity.this, resources.getString(R.string.wrong_user));
                 }
             }
         });
@@ -89,13 +90,15 @@ public class UserLoginActivity extends AppCompatActivity {
     }
 
     boolean validateData(String email, String password) {
+        Resources resources = getResources();
+
         //validate data that are input by client
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            emailEditTxt.setError("Email is invalid");
+            emailEditTxt.setError(resources.getString(R.string.invalid_email));
             return false;
         }
         if(password.length()<6){
-            passwordEditTxt.setError("Password length is invalid");
+            passwordEditTxt.setError(resources.getString(R.string.invalid_length_password));
             return false;
         }
         return true;

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Note Master</string>
+    <string name="Hello">Здраво</string>
+    <string name="welcome_back">Добредојде назад</string>
+    <string name="email">Е-пошта</string>
+    <string name="password">Лозинка</string>
+    <string name="confirm_password">Потврди Лозинка</string>
+    <string name="login">Најави се</string>
+    <string name="logout">Одјави се</string>
+    <string name="user_registration_text">Сеуште немаш корисничка сметка, </string>
+    <string name="click_here">кликни тука</string>
+    <string name="notes">Белешки</string>
+    <string name="create_note">Креирај белешка</string>
+    <string name="title">Наслов</string>
+    <string name="content">Содржина</string>
+    <string name="delete_note">Избриши белешка</string>
+    <string name="get_started">Ајде да почнеме</string>
+    <string name="create_user">Креирај корисник</string>
+    <string name="registered_user_text">Дали си регистриран? </string>
+    <string name="succ_created_note">Белешката е успешно креирана</string>
+    <string name="fail_created_note">Неуспешно креирање на белешка</string>
+    <string name="edit_note">Уреди белешка</string>
+    <string name="title_reqired">Задолжително поле</string>
+    <string name="succ_deleted_note">Белешката е успешно избришана</string>
+    <string name="fail_deleted_note">Неуспешно бришење на белешка</string>
+    <string name="succ_updated_note">Белешката е успешно ажурирана</string>
+    <string name="fail_updated_note">Неуспешно ажурирање на белешка</string>
+    <string name="verify_email_msg">Вашата е-пошта не е потврдена, ве молиме потврдете ја</string>
+    <string name="invalid_email">Е-поштата е невалидна</string>
+    <string name="invalid_length_password">Должината на лозинката е невалидна</string>
+    <string name="succ_created_user">Успешно креиран корисник. Проверете ја вашата е-пошта за да потврдите</string>
+    <string name="password_not_matched">Лозинката не се совпаѓа</string>
+    <string name="wrong_user">Лозинката е неважечка или корисникот нема корисничка сметка</string>
+</resources>

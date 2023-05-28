@@ -3,6 +3,7 @@ package com.ml.notemaster;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -13,6 +14,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
+
+import java.util.Locale;
 
 
 public class NoteDetailsActivity extends AppCompatActivity {
@@ -26,6 +29,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Resources resources = getResources();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_details);
 
@@ -42,7 +46,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
 
         if(docId != null && !docId.isEmpty()) {
             isEditing = true;
-            pageTitleTxtView.setText("Edit note");
+            pageTitleTxtView.setText(resources.getString(R.string.edit_note));
             deleteNoteBtn.setVisibility(View.VISIBLE);
         }
 
@@ -56,11 +60,13 @@ public class NoteDetailsActivity extends AppCompatActivity {
     }
 
     void createNote() {
+        Resources resources = getResources();
+
         String noteTitle = titleEditTxt.getText().toString();
         String noteContent = contentEditTxt.getText().toString();
 
-        if(noteTitle == null || noteTitle.isEmpty()) {
-            titleEditTxt.setError("Title is required");
+        if (noteTitle == null || noteTitle.isEmpty()) {
+            titleEditTxt.setError(resources.getString(R.string.title_reqired));
             return;
         }
 
@@ -70,7 +76,6 @@ public class NoteDetailsActivity extends AppCompatActivity {
         note.setTimestamp(Timestamp.now());
 
         createNoteToFireBase(note);
-
     }
 
     void createNoteToFireBase(Note note) {
@@ -87,35 +92,40 @@ public class NoteDetailsActivity extends AppCompatActivity {
         documentReference.set(note).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                Resources resources = getResources();
                 if(task.isSuccessful()) {
                     //note is created
-                    Utility.showToast(NoteDetailsActivity.this,"Note created successfully");
+
+                    Utility.showToast(NoteDetailsActivity.this,resources.
+                            getString(isEditing ? R.string.succ_updated_note : R.string.succ_created_note));
                     finish();
                 }
                 else {
                     //note is not created
-                    Utility.showToast(NoteDetailsActivity.this,"Failed while creating note");
+                    Utility.showToast(NoteDetailsActivity.this,resources.
+                            getString(isEditing ? R.string.fail_updated_note : R.string.fail_created_note));
                 }
             }
         });
     }
 
     void deleteNoteFromFirebase() {
+        Resources resources = getResources();
+
         DocumentReference documentReference;
         documentReference = Utility.getCollectionReferenceForNotes().document(docId);
-
 
         documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()) {
                     //note is deleted
-                    Utility.showToast(NoteDetailsActivity.this,"Note deleted successfully");
+                    Utility.showToast(NoteDetailsActivity.this,resources.getString(R.string.succ_deleted_note));
                     finish();
                 }
                 else {
-                    //note is not created
-                    Utility.showToast(NoteDetailsActivity.this,"Failed while deleting note");
+                    //note is not deleted
+                    Utility.showToast(NoteDetailsActivity.this,resources.getString(R.string.fail_deleted_note));
                 }
             }
         });

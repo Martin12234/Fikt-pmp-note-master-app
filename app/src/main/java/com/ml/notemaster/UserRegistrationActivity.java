@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -68,10 +69,11 @@ public class UserRegistrationActivity extends AppCompatActivity {
         firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(UserRegistrationActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                Resources resources = getResources();
                 changeInProgress(false);
                 if(task.isSuccessful()){
                     //creating user is done
-                    Utility.showToast(UserRegistrationActivity.this, "Successfully create user. Check email to verify");
+                    Utility.showToast(UserRegistrationActivity.this, resources.getString(R.string.succ_created_user));
                     firebaseAuth.getCurrentUser().sendEmailVerification();
                     firebaseAuth.signOut();
                     finish();
@@ -96,17 +98,19 @@ public class UserRegistrationActivity extends AppCompatActivity {
     }
 
     boolean validateData(String email, String password, String confirmPassword) {
+        Resources resources = getResources();
+
         //validate data that are input by client
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            emailEditTxt.setError("Email is invalid");
+            emailEditTxt.setError(resources.getString(R.string.invalid_email));
             return false;
         }
         if(password.length()<6){
-            passwordEditTxt.setError("Password length is invalid");
+            passwordEditTxt.setError(resources.getString(R.string.invalid_length_password));
             return false;
         }
         if(!password.equals(confirmPassword)) {
-            confirmPasswordEditTxt.setError("Password not matched");
+            confirmPasswordEditTxt.setError(resources.getString(R.string.password_not_matched));
             return false;
         }
         return true;
