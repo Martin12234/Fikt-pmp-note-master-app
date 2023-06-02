@@ -86,7 +86,18 @@
             android:text="@string/login"
             android:layout_marginTop="10dp"
             android:textSize="18sp"
+            />
 
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/login_anonymous_btn"
+            android:text="@string/login_anonymous"
+            android:layout_marginTop="10dp"
+            android:textSize="18sp"
+            android:backgroundTint="@color/black"
+            android:textColor="@color/white"
             />
 
         <ProgressBar
@@ -109,7 +120,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12dp"
+            android:textSize="15dp"
             android:text="@string/user_registration_text"
             />
         <TextView
@@ -117,11 +128,21 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:id="@+id/create_user_text_view_btn"
-            android:textSize="12dp"
+            android:textSize="15dp"
             android:text="@string/click_here"
             />
 
     </LinearLayout>
+    <ImageView
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:background="@drawable/rounded_background"
+        android:id="@+id/google_icon_btn"
+        android:layout_below="@id/form_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginVertical="15dp"
+        android:src="@drawable/google"
+        />
 
 
 </RelativeLayout>

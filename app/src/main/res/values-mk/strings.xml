@@ -7,6 +7,7 @@
     <string name="password">Лозинка</string>
     <string name="confirm_password">Потврди Лозинка</string>
     <string name="login">Најави се</string>
+    <string name="login_anonymous">Најави се анонимно</string>
     <string name="logout">Одјави се</string>
     <string name="user_registration_text">Сеуште немаш корисничка сметка, </string>
     <string name="click_here">кликни тука</string>
@@ -32,4 +33,5 @@
     <string name="succ_created_user">Успешно креиран корисник. Проверете ја вашата е-пошта за да потврдите</string>
     <string name="password_not_matched">Лозинката не се совпаѓа</string>
     <string name="wrong_user">Лозинката е неважечка или корисникот нема корисничка сметка</string>
+    <string name="google_signin_txt">Најава со google...</string>
 </resources>
