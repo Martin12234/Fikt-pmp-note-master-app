@@ -2,6 +2,7 @@ package com.mlfikt.notemaster;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ public class NoteDetailsActivity extends AppCompatActivity {
     TextView  pageTitleTxtView, deleteNoteBtn;
     String title, content, docId;
     boolean isEditing = false;
+
 
 
     @Override
@@ -55,6 +57,8 @@ public class NoteDetailsActivity extends AppCompatActivity {
         createNoteBtn.setOnClickListener(v-> createNote());
 
         deleteNoteBtn.setOnClickListener(v-> deleteNoteFromFirebase());
+
+
     }
 
     void createNote() {

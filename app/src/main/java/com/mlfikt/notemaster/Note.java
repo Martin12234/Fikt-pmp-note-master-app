@@ -1,8 +1,16 @@
 package com.mlfikt.notemaster;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
 import com.google.firebase.Timestamp;
 
+@Entity
+@TypeConverters(TimestampConverter.class)
 public class Note {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
     private String title;
     private String content;
     private Timestamp timestamp;
@@ -33,4 +41,15 @@ public class Note {
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+
+
 }

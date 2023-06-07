@@ -1,5 +1,6 @@
 package com.mlfikt.notemaster;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,18 +8,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import butterknife.BindView;
+
 public class MainActivity extends AppCompatActivity {
+
+
 
     FloatingActionButton addNoteBtn;
     RecyclerView recyclerView;
@@ -37,10 +48,19 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyler_view);
         menuBtn = findViewById(R.id.menu_btn);
 
-        addNoteBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, NoteDetailsActivity.class)));
+        addNoteBtn.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, NoteDetailsActivity.class));
+        });
+
         menuBtn.setOnClickListener(v -> showMenu());
-        setupRecyclerView();
+        if (Utility.isInternetConnected(MainActivity.this)) {
+
+            setupRecyclerView();
+
+
+        }
     }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -96,18 +116,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        noteAdapter.startListening();
+        if (Utility.isInternetConnected(MainActivity.this)) {
+            noteAdapter.startListening();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        noteAdapter.stopListening();
+        if (Utility.isInternetConnected(MainActivity.this)) {
+            noteAdapter.stopListening();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        noteAdapter.notifyDataSetChanged();
+        if (Utility.isInternetConnected(MainActivity.this)) {
+            noteAdapter.notifyDataSetChanged();
+        }
     }
 }

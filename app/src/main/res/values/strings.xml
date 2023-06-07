@@ -33,5 +33,6 @@
     <string name="password_not_matched">Password not matched</string>
     <string name="wrong_user">The password is invalid or the user does not have a password</string>
     <string name="google_signin_txt">Google Sign in...</string>
-
+    <string name="no_internet_registered">No internet connection. User registered locally</string>
+    <string name="no_internet_user_exist">User already exists in the local database</string>
 </resources>

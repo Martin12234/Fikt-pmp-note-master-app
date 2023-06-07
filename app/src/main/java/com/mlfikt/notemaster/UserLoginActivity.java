@@ -2,10 +2,16 @@ package com.mlfikt.notemaster;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -65,27 +71,86 @@ public class UserLoginActivity extends AppCompatActivity {
     void loginUserInFirebase(String email, String password) {
         changeInProgress(true);
 
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                Resources resources = getResources();
-                changeInProgress(false);
-                if(task.isSuccessful()) {
-                    //success login
-                    if(firebaseAuth.getCurrentUser().isEmailVerified()) {
-                        //go to main activity
-                        startActivity(new Intent(UserLoginActivity.this, MainActivity.class));
+        Resources resources = getResources();
+
+        // Check for internet connectivity
+        if (Utility.isInternetConnected(UserLoginActivity.this)) {
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                    changeInProgress(false);
+                    if (task.isSuccessful()) {
+                        // Success login
+                        if (firebaseAuth.getCurrentUser().isEmailVerified()) {
+                            // Go to main activity
+                            startActivity(new Intent(UserLoginActivity.this, MainActivity.class));
+                        } else {
+                            Utility.showToast(UserLoginActivity.this, resources.getString(R.string.verify_email_msg));
+                        }
                     } else {
-                        Utility.showToast(UserLoginActivity.this, resources.getString(R.string.verify_email_msg));
+                        // Failed login
+                        Utility.showToast(UserLoginActivity.this, resources.getString(R.string.wrong_user));
                     }
-                } else {
-                    //failed login
-                    Utility.showToast(UserLoginActivity.this, resources.getString(R.string.wrong_user));
+                }
+            });
+        } else {
+            // No internet connection, try to log in using local database
+
+            loginUserLocally(email, password, resources);
+        }
+    }
+
+
+    void loginUserLocally(String email, String password, Resources resources) {
+        changeInProgress(true);
+
+        new AsyncTask<Void, Void, User>() {
+            @Override
+            protected User doInBackground(Void... voids) {
+                try {
+                    // Initialize the Room database
+                    Log.d("UserLoginActivity", "Initializing the local database");
+                    UserDatabase userDatabase = Room.databaseBuilder(
+                            getApplicationContext(),
+                            UserDatabase.class,
+                            "user-database"
+                    ).build();
+
+                    // Check if the user exists in the local database
+                    Log.d("UserLoginActivity", "Checking user in the local database");
+                    UserDao userDao = userDatabase.userDao();
+                    User user = userDao.getUserByEmailAndPassword(email, password);
+
+                    return user;
+                } catch (Exception e) {
+                    // Handle any exceptions that occur during the database operation
+                    Log.e("UserLoginActivity", "Error accessing the local database", e);
+                    return null;
                 }
             }
-        });
+
+            @Override
+            protected void onPostExecute(User user) {
+                super.onPostExecute(user);
+                if (user != null) {
+                    // User found in the local database
+                    Log.d("UserLoginActivity", "User found in the local database");
+                    startActivity(new Intent(UserLoginActivity.this, MainActivity.class));
+
+                } else {
+                    // User doesn't exist or wrong credentials, show a message or take appropriate action
+                    Log.d("UserLoginActivity", "User not found in the local database");
+                    Utility.showToast(UserLoginActivity.this, resources.getString(R.string.wrong_user));
+                }
+                changeInProgress(false);
+            }
+        }.execute();
     }
+
+
+
 
     void changeInProgress(boolean inProgress) {
         if(inProgress){
@@ -112,4 +177,5 @@ public class UserLoginActivity extends AppCompatActivity {
         }
         return true;
     }
+
 }

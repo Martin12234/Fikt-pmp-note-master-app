@@ -2,9 +2,14 @@ package com.mlfikt.notemaster;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -60,28 +65,84 @@ public class UserRegistrationActivity extends AppCompatActivity {
     }
 
     void createUserInFirebase(String email, String password) {
+        Resources resources = getResources();
         changeInProgress(true);
 
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(UserRegistrationActivity.this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                Resources resources = getResources();
-                changeInProgress(false);
-                if(task.isSuccessful()){
-                    //creating user is done
-                    Utility.showToast(UserRegistrationActivity.this, resources.getString(R.string.succ_created_user));
-                    firebaseAuth.getCurrentUser().sendEmailVerification();
-                    firebaseAuth.signOut();
-                    finish();
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+
+        // Check for internet connectivity
+        if (Utility.isInternetConnected(UserRegistrationActivity.this)) {
+            // Internet connection available, register the user in Firebase
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(UserRegistrationActivity.this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                    changeInProgress(false);
+                    if (task.isSuccessful()) {
+                        // User registration successful
+                        Utility.showToast(UserRegistrationActivity.this, resources.getString(R.string.succ_created_user));
+                        firebaseAuth.getCurrentUser().sendEmailVerification();
+                        firebaseAuth.signOut();
+
+                        // Save the user in the local Room database
+                        saveUserLocally(user, resources);
+
+                        finish();
+                    } else {
+                        // User registration failed
+                        Utility.showToast(UserRegistrationActivity.this, task.getException().getLocalizedMessage());
+                    }
                 }
-                else {
-                    //failure
-                    Utility.showToast(UserRegistrationActivity.this, task.getException().getLocalizedMessage());
-                }
-            }
-        });
+            });
+        } else {
+            // No internet connection, save the user only in the local database
+            saveUserLocally(user, resources);
+            changeInProgress(false);
+            finish();
+        }
     }
+
+    void saveUserLocally(User user, Resources resources) {
+        // Execute the database operation on a background thread using AsyncTask
+        new AsyncTask<Void, Void, User>() {
+            @Override
+            protected User doInBackground(Void... voids) {
+                // Initialize the Room database
+                UserDatabase userDatabase = Room.databaseBuilder(getApplicationContext(),
+                        UserDatabase.class, "user-database").build();
+
+                // Check if the email already exists in the database
+                UserDao userDao = userDatabase.userDao();
+                User existingUser = userDao.getUserByEmail(user.getEmail());
+
+                // Save the user only if the email doesn't already exist
+                if (existingUser == null) {
+                    userDao.insert(user);
+                }
+
+                return existingUser;
+            }
+
+            @Override
+            protected void onPostExecute(User existingUser) {
+                super.onPostExecute(existingUser);
+                if (!Utility.isInternetConnected(UserRegistrationActivity.this)) {
+                    if (existingUser == null) {
+                        Utility.showToast(UserRegistrationActivity.this, resources.getString(R.string.no_internet_registered));
+                    } else {
+                        Utility.showToast(UserRegistrationActivity.this,  resources.getString(R.string.no_internet_user_exist));
+                    }
+                }
+                changeInProgress(false);
+                finish();
+            }
+        }.execute();
+    }
+
+
 
     void changeInProgress(boolean inProgress) {
         if(inProgress){
@@ -112,4 +173,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
+
 }

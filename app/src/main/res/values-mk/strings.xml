@@ -34,4 +34,6 @@
     <string name="password_not_matched">Лозинката не се совпаѓа</string>
     <string name="wrong_user">Лозинката е неважечка или корисникот нема корисничка сметка</string>
     <string name="google_signin_txt">Најава со google...</string>
+    <string name="no_internet_registered">Нема интернет конекција. Корисник e регистриран локално</string>
+    <string name="no_internet_user_exist">Корисникот веќе постои во локалната база на податоци</string>
 </resources>
